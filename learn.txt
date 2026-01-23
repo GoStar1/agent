@@ -4,9 +4,9 @@ https://github.com/datawhalechina/hello-agents
 
 
 
-4.小结 习题  ReAct、Plan-and-Solve 与 Reflection            1
-5.Coze n8n Dify                                           2  
-7.做框架HelloAgents 分布实现第4课                            1
+4.小结 习题  ReAct、Plan-and-Solve 与 Reflection            
+5.Coze n8n Dify                                           20  
+7.做框架HelloAgents 分布实现第4课                            
 
 8.记忆 RAG技术                                              
 9.上下文
@@ -15,7 +15,13 @@ https://github.com/datawhalechina/hello-agents
 12.性能评估 （框架一般带 bfcl）
 
 13.智能旅行助手                                             
-14.自动化深度研究智能体  类似cc的todo    看不懂
+14.自动化深度研究智能体  类似cc的todo    
 15.游戏人物 ai化 根据好感度对话不一样
 
 16.做个项目
+
+
+
+rag
+anp是什么？
+11章
