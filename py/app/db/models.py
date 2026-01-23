@@ -1,6 +1,7 @@
 """Database models using SQLAlchemy."""
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, Float, Text, DateTime, ForeignKey, JSON
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 import uuid
@@ -9,15 +10,15 @@ Base = declarative_base()
 
 
 def generate_uuid():
-    """Generate a UUID string."""
-    return str(uuid.uuid4())
+    """Generate a UUID."""
+    return uuid.uuid4()
 
 
 class User(Base):
     """User model."""
     __tablename__ = "users"
 
-    id = Column(String, primary_key=True, default=generate_uuid)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
     username = Column(String, unique=True, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -31,8 +32,8 @@ class Conversation(Base):
     """Conversation model."""
     __tablename__ = "conversations"
 
-    id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     title = Column(String, default="New Conversation")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -46,8 +47,8 @@ class Message(Base):
     """Message model."""
     __tablename__ = "messages"
 
-    id = Column(String, primary_key=True, default=generate_uuid)
-    conversation_id = Column(String, ForeignKey("conversations.id"), nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    conversation_id = Column(UUID(as_uuid=True), ForeignKey("conversations.id"), nullable=False)
     role = Column(String, nullable=False)  # user, assistant, system
     content = Column(Text, nullable=False)
     extra_data = Column(JSON, default=dict)  # Renamed from metadata to avoid SQLAlchemy conflict
@@ -61,7 +62,7 @@ class Exercise(Base):
     """Exercise model."""
     __tablename__ = "exercises"
 
-    id = Column(String, primary_key=True, default=generate_uuid)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
     subject = Column(String, nullable=False)  # math, physics, chemistry
     topic = Column(String, nullable=False)
     difficulty = Column(String, nullable=False)  # beginner, intermediate, advanced
@@ -80,9 +81,9 @@ class ExerciseSubmission(Base):
     """Exercise submission model."""
     __tablename__ = "exercise_submissions"
 
-    id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    exercise_id = Column(String, ForeignKey("exercises.id"), nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    exercise_id = Column(UUID(as_uuid=True), ForeignKey("exercises.id"), nullable=False)
     user_answer = Column(Text, nullable=False)
     score = Column(Float)
     feedback = Column(JSON, default=dict)
@@ -97,8 +98,8 @@ class TopicProgress(Base):
     """Topic progress tracking model."""
     __tablename__ = "topic_progress"
 
-    id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     subject = Column(String, nullable=False)  # math, physics, chemistry
     topic = Column(String, nullable=False)
     mastery_level = Column(Float, default=0.0)  # 0.0 to 1.0
@@ -116,8 +117,8 @@ class GradingResult(Base):
     """Grading result model."""
     __tablename__ = "grading_results"
 
-    id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     subject = Column(String, nullable=False)
     questions = Column(JSON, nullable=False)
     answers = Column(JSON, nullable=False)
