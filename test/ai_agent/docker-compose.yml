@@ -1,0 +1,79 @@
+version: "3.9"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: ai_agent_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-agent_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-agent_password}
+      POSTGRES_DB: ${POSTGRES_DB:-agent_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-agent_user} -d ${POSTGRES_DB:-agent_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ai_agent_network
+
+  # Redis with RediSearch module for vector search
+  redis:
+    image: redis/redis-stack:latest
+    container_name: ai_agent_redis
+    restart: unless-stopped
+    environment:
+      REDIS_ARGS: "--requirepass ${REDIS_PASSWORD:-}"
+    volumes:
+      - redis_data:/data
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+      - "8001:8001"  # RedisInsight
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ai_agent_network
+
+  # AI Agent Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai_agent_app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app:ro  # Mount for development
+    networks:
+      - ai_agent_network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  ai_agent_network:
+    driver: bridge

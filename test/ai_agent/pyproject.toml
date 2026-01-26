@@ -1,0 +1,86 @@
+[tool.poetry]
+name = "ai-agent"
+version = "1.0.0"
+description = "Production-grade AI Agent with LangChain, LangGraph, RAG, and Multi-level Memory"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+# Core Framework
+fastapi = "^0.109.0"
+uvicorn = {extras = ["standard"], version = "^0.27.0"}
+pydantic = "^2.5.0"
+pydantic-settings = "^2.1.0"
+python-dotenv = "^1.0.0"
+
+# LangChain Ecosystem
+langchain = "^0.1.0"
+langchain-core = "^0.1.0"
+langchain-openai = "^0.0.5"
+langchain-community = "^0.0.13"
+langgraph = "^0.0.24"
+langchain-text-splitters = "^0.0.1"
+
+# Database
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.25"}
+asyncpg = "^0.29.0"
+alembic = "^1.13.0"
+
+# Redis
+redis = {extras = ["hiredis"], version = "^5.0.0"}
+
+# Vector & Embeddings
+numpy = "^1.26.0"
+tiktoken = "^0.5.0"
+
+# Web Search
+tavily-python = "^0.3.0"
+
+# Utilities
+httpx = "^0.26.0"
+tenacity = "^8.2.0"
+python-multipart = "^0.0.6"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.23.0"
+pytest-cov = "^4.1.0"
+httpx = "^0.26.0"
+black = "^24.1.0"
+ruff = "^0.1.0"
+mypy = "^1.8.0"
+pre-commit = "^3.6.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+include = '\.pyi?$'
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "I", "N", "W", "B", "C4", "UP"]
+ignore = ["E501"]
+target-version = "py311"
+
+[tool.ruff.isort]
+known-first-party = ["app"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = "-v --tb=short"
